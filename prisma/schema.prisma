@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  clubId    String
+  location  String?  // Specific location: ASTANA, SARAISHYK, ZAHZAGANSK, MAMETOVA, TRK
+  type      String   @default("suggestion") // "suggestion" or "complaint"
+  category  String?  // "computers", "service", "food", "cleanliness", "other"
+  rating    Int
+  comment   String
+  photoUrl  String?  // Optional photo attachment
+  contact   String?  // Optional contact info (phone/instagram)
+  status    String   @default("NEW") // "NEW", "IN_PROGRESS", "RESOLVED", "REJECTED"
+  createdAt DateTime @default(now())
+}
