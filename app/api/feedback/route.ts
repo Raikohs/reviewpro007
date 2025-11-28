@@ -24,22 +24,25 @@ export async function POST(request: Request) {
         // DEBUG: Check env vars on server
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL
         const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        // Use Service Role Key if available (bypasses RLS), otherwise fallback to Anon Key
+        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        const keyToUse = serviceRoleKey || key
 
         console.log('Server Env Check:', {
             hasUrl: !!url,
-            urlPrefix: url?.substring(0, 10),
-            hasKey: !!key,
-            keyPrefix: key?.substring(0, 10),
-            keyLength: key?.length,
-            hasWhitespace: key ? /\s/.test(key) : false,
-            isPlaceholder: url?.includes('placeholder') || key?.includes('placeholder')
+            hasAnonKey: !!key,
+            hasServiceKey: !!serviceRoleKey,
+            usingServiceKey: !!serviceRoleKey,
+            keyLength: keyToUse?.length
         })
 
-        // Initialize Supabase client directly to ensure fresh env vars
+        // Initialize Supabase client directly
         const { createClient } = require('@supabase/supabase-js')
-        const supabase = createClient(url, key, {
+        const supabase = createClient(url, keyToUse, {
             auth: {
-                persistSession: false // Important for server-side usage
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false
             }
         })
 
