@@ -21,6 +21,17 @@ export async function POST(request: Request) {
             )
         }
 
+        // DEBUG: Check env vars on server
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        console.log('Server Env Check:', {
+            hasUrl: !!url,
+            urlPrefix: url?.substring(0, 10),
+            hasKey: !!key,
+            keyPrefix: key?.substring(0, 10),
+            isPlaceholder: url?.includes('placeholder') || key?.includes('placeholder')
+        })
+
         let photoUrl: string | null = null
 
         // Handle photo upload if present
