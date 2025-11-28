@@ -24,12 +24,23 @@ export async function POST(request: Request) {
         // DEBUG: Check env vars on server
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL
         const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
         console.log('Server Env Check:', {
             hasUrl: !!url,
             urlPrefix: url?.substring(0, 10),
             hasKey: !!key,
             keyPrefix: key?.substring(0, 10),
+            keyLength: key?.length,
+            hasWhitespace: key ? /\s/.test(key) : false,
             isPlaceholder: url?.includes('placeholder') || key?.includes('placeholder')
+        })
+
+        // Initialize Supabase client directly to ensure fresh env vars
+        const { createClient } = require('@supabase/supabase-js')
+        const supabase = createClient(url, key, {
+            auth: {
+                persistSession: false // Important for server-side usage
+            }
         })
 
         let photoUrl: string | null = null
