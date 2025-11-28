@@ -48,7 +48,7 @@ export default function DiagnosePage() {
             <div style={{ marginTop: '20px' }}>
                 <h3>How to fix:</h3>
                 <ol>
-                    <li>Go to Vercel Dashboard -> Settings -> Environment Variables</li>
+                    <li>Go to Vercel Dashboard &rarr; Settings &rarr; Environment Variables</li>
                     <li>Ensure <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> are set correctly</li>
                     <li><strong>IMPORTANT:</strong> Go to Deployments and click <strong>Redeploy</strong></li>
                 </ol>
