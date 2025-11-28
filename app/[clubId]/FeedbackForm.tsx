@@ -10,9 +10,13 @@ const CLUB_LOCATIONS: Record<string, string[]> = {
     'PINGWIN': [] // Single location, no selector needed
 }
 
-export default function FeedbackForm({ clubId }: { clubId: string }) {
+export default function FeedbackForm({ clubId, initialLocation }: { clubId: string, initialLocation?: string }) {
     const locations = CLUB_LOCATIONS[clubId] || []
-    const [location, setLocation] = useState(locations[0] || '')
+
+    // Validate initialLocation against available locations for this club
+    const validInitialLocation = initialLocation && locations.includes(initialLocation) ? initialLocation : undefined
+
+    const [location, setLocation] = useState(validInitialLocation || locations[0] || '')
     const [type, setType] = useState<'suggestion' | 'complaint'>('suggestion')
     const [category, setCategory] = useState('')
     const [rating, setRating] = useState(0)
@@ -106,19 +110,27 @@ export default function FeedbackForm({ clubId }: { clubId: string }) {
                 <p className={styles.subtitle}>Оставьте отзыв о клубе</p>
 
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    {/* Location Selector - only for clubs with multiple locations */}
+                    {/* Location Display/Selector */}
                     {locations.length > 0 && (
                         <div className={styles.locationSelector}>
-                            <label className={styles.locationLabel}>Выберите точку:</label>
-                            <select
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                className={styles.locationSelect}
-                            >
-                                {locations.map((loc) => (
-                                    <option key={loc} value={loc}>{loc}</option>
-                                ))}
-                            </select>
+                            {validInitialLocation ? (
+                                <div className={styles.staticLocation}>
+                                    📍 Локация: <strong>{validInitialLocation}</strong>
+                                </div>
+                            ) : (
+                                <>
+                                    <label className={styles.locationLabel}>Выберите точку:</label>
+                                    <select
+                                        value={location}
+                                        onChange={(e) => setLocation(e.target.value)}
+                                        className={styles.locationSelect}
+                                    >
+                                        {locations.map((loc) => (
+                                            <option key={loc} value={loc}>{loc}</option>
+                                        ))}
+                                    </select>
+                                </>
+                            )}
                         </div>
                     )}
 

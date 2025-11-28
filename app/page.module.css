@@ -164,6 +164,16 @@
 }
 
 /* Feedback Type Selector */
+.staticLocation {
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  color: #0369a1;
+  font-size: 16px;
+  text-align: center;
+}
+
 .typeSelector {
   display: flex;
   gap: 1rem;

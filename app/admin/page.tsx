@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import styles from './page.module.css'
 import { redirect } from 'next/navigation'
 import ImageModal from './ImageModal'
+import QRCodeGenerator from './QRCodeGenerator'
 
 // This is a server component
 export default async function AdminPage({
@@ -59,6 +60,7 @@ export default async function AdminPage({
                 <div className={styles.headerTop}>
                     <h1 className={styles.title}>Dashboard</h1>
                     <div className={styles.filters}>
+                        <QRCodeGenerator />
                         <form className={styles.filterForm}>
                             <input type="hidden" name="password" value={password} />
                             <select name="club" defaultValue={clubFilter} className={styles.filterSelect}>

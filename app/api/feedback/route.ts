@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: Request) {
     try {
@@ -31,12 +30,29 @@ export async function POST(request: Request) {
 
             // Generate unique filename
             const timestamp = Date.now()
-            const filename = `${clubId}-${timestamp}-${photo.name}`
-            const filepath = join(process.cwd(), 'public', 'uploads', filename)
+            const filename = `${clubId}-${timestamp}-${photo.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
 
-            // Save file
-            await writeFile(filepath, buffer)
-            photoUrl = `/uploads/${filename}`
+            // Upload to Supabase Storage
+            const { data, error: uploadError } = await supabase
+                .storage
+                .from('uploads')
+                .upload(filename, buffer, {
+                    contentType: photo.type,
+                    upsert: false
+                })
+
+            if (uploadError) {
+                console.error('Supabase upload error:', uploadError)
+                throw new Error('Failed to upload photo')
+            }
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase
+                .storage
+                .from('uploads')
+                .getPublicUrl(filename)
+
+            photoUrl = publicUrl
         }
 
         const review = await prisma.review.create({
